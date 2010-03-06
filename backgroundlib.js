@@ -1,7 +1,10 @@
-// Let's hide it all inside the database namespace
+/*
+ * DB access layer with logging features for better debugging
+ */
+
+var db = new DataBase();
 
 function getDB() {
-   var db = new DataBase();
    return db;
 }
 
@@ -58,4 +61,27 @@ DataBase.prototype.clear = function() {
    this.log('cleared');
 }
 
+/*
+ * Listeners to collect data and store it in HTML5 storage 
+ */
 
+chrome.tabs.onCreated.addListener(function(tab) {
+
+}); 
+
+
+chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+
+}); 
+
+chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
+      
+});
+
+chrome.tabs.onRemoved.addListener(function(tabId) {
+
+}); 
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+
+}); 
