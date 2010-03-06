@@ -1,0 +1,20 @@
+{
+  "name": "TabCollector",
+  "version": "0.0.1",
+  "description": "An extension to automatically clean up your tabs",
+  "icons" : {
+  	"16":"icon.png",
+  	"32":"icon.png",
+  	"48":"icon.png",
+  	"128":"icon.png"
+  },
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "TabCollector",
+    "popup": "popup.html"
+  },
+  "background_page": "background.html",
+  "permissions": [
+      "tabs"
+  ]
+}

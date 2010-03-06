@@ -1,0 +1,25 @@
+<html>
+<head>
+<script language="javascript" type="text/javascript" src="popuplib.js"></script> 
+<script language="javascript" type="text/javascript">
+   function test() {
+     var db = new DB();
+     db.setItem("foo", "bar");
+     var data = db.getItem("foo");
+     alert(data);
+   }
+</script> 
+<style>
+body{
+	overflow: hidden;
+	width: 200px;
+	height: 100px;
+}
+</style>
+</head>
+<body>
+  <p>
+   <input type="button" value="Collect them!" onclick="test()" />
+  </p>
+</body>
+</html>
