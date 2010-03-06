@@ -94,7 +94,8 @@ function getTabData(tab) {
          "dateLastViewed": currentDate,
          "dateLastUpdated": currentDate,
          "dateLastMoved": currentDate,
-         "viewCount": 0
+         "viewCount": 0,
+         "updateCount": 0
       };  
    }
 
@@ -142,5 +143,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
    var item = getTabData(tab);
    item.url = tab.url;
    item.dateLastUpdated = new Date();
+   item.updateCount += 1;
    db.setItem(tabId, item);
 });
