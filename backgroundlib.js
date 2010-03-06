@@ -46,7 +46,7 @@ DataBase.prototype.removeItem = function(key) {
    this.log('Removing Item:' + key);
    
    try {
-      value = window.localStorage.removeItem(key);
+      window.localStorage.removeItem(key);
    } catch(e) {
       this.log("Error inside removeItem() for key:" + key);
       this.log(e);
