@@ -1,4 +1,4 @@
-/*
+//*
  * DB access layer with logging features for better debugging
  */
 
@@ -41,7 +41,7 @@ DataBase.prototype.getItem = function(key) {
       log(e);
       value = null;
    }
-   log("return: " + alue);
+   log("return: " + value);
    return value;
 }
 
