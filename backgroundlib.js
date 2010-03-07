@@ -1,4 +1,4 @@
-//*
+/*
  * DB access layer with logging features for better debugging
  */
 
