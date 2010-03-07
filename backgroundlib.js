@@ -86,19 +86,14 @@ function getDomainData(url) {
             "time": 0
          },
 
-         "timeBetweenUpdates": {
+         "updateCount": {
             "count": 0,
-            "time": 0
+            "updates": 0
          },
 
-         "timeBetweenMoves": {
+         "viewCount": {
             "count": 0,
-            "time": 0
-         },
-
-         "timeBetweenViews": {
-            "count": 0,
-            "time": 0
+            "views": 0
          }
       }
    }
@@ -117,47 +112,54 @@ function getAVGLifeTime(domainData) {
    }
 }
 
-function addTimeBetweenUpdates(domainData, timeBetweenUpdates) {
-   domainData.timeBetweenUpdates.time += timeBetweenUpdates;
-   domainData.timeBetweenUpdates.count += 1;
+function addUpdateCount(domainData, updateCount) {
+   domainData.updateCount.updates += updateCount;
+   domainData.updateCount.count += 1;
 }
 
 function getAVGTimeBetweenUpdates(domainData) {
-   if (domainData.timeBetweenUpdates.count == 0) {
+   if (domainData.updateCount.count == 0) {
       return 0;
    } else {
-      return (domainData.timeBetweenUpdates.time/domainData.timeBetweenUpdates.count);
+      return (domainData.updateCount.updates/domainData.updateCount.count);
    }
 }
 
-function addTimeBetweenViews(domainData, timeBetweenViews) {
-   domainData.timeBetweenViews.time += timeBetweenViews;
-   domainData.timeBetweenViews.count += 1;
+function addViewCount(domainData, viewCount) {
+   domainData.viewCount.views += viewCount;
+   domainData.viewCount.count += 1;
 }
 
 function getAVGTimeBetweenViews(domainData) {
-   if (domainData.timeBetweenViews.count == 0) {
+   if (domainData.viewCount.count == 0) {
       return 0;
    } else {
-      return (domainData.timeBetweenViews.time/domainData.timeBetweenViews.count);
-   }
-}
-
-function addTimeBetweenMoves(domainData, timeBetweenMoves) {
-   domainData.timeBetweenMoves.time += timeBetweenMoves;
-   domainData.timeBetweenMoves.count += 1;
-}
-
-function getAVGTimeBetweenMoves(domainData) {
-   if (domainData.timeBetweenMoves.count == 0) {
-      return 0;
-   } else {
-      return (domainData.timeBetweenMoves.time/domainData.timeBetweenMoves.count);
+      return (domainData.viewCount.views/domainData.viewCount.count);
    }
 }
 
 function getDomainForURL(url) {
    return url.split("/")[2];
+}
+
+function parseDate(str) {
+   var parts = str.split('T'),
+   dateParts = parts[0].split('-'),
+   timeParts = parts[1].split('Z'),
+   timeSubParts = timeParts[0].split(':'),
+   timeSecParts = timeSubParts[2].split('.'),
+   timeHours = Number(timeSubParts[0]),
+   d = new Date;
+
+   d.setUTCFullYear(Number(dateParts[0]));
+   d.setUTCMonth(Number(dateParts[1])-1);
+   d.setUTCDate(Number(dateParts[2]));
+   d.setUTCHours(Number(timeHours));
+   d.setUTCMinutes(Number(timeSubParts[1]));
+   d.setUTCSeconds(Number(timeSecParts[0]));
+   if (timeSecParts[1]) d.setUTCMilliseconds(Number(timeSecParts[1]));
+
+ return d;
 }
 
 
@@ -197,16 +199,10 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
    chrome.tabs.get(tabId, 
       function(tab) {
          log("tab selected: " + tab.id + ":" + tab.url);
-         var currentDate = new Date();
-         var domain = getDomainForURL(tab.url);
          var item = getTabData(tab);
-         var domainData = getDomainData(domain);
-
-         addTimeBetweenViews(domainData, currentDate - item.dateLastViewed);
-         db.setItem(domain, domainData);
 
          item.url = tab.url;
-         item.dateLastViewed = currentDate;
+         item.dateLastViewed = new Date();
          item.viewCount += 1;
          db.setItem(tabId, item);
       }
@@ -217,13 +213,7 @@ chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
    chrome.tabs.get(tabId, 
       function(tab) {
          log("tab moved: " + tab.id + ":" + tab.url);
-         var currentDate = new Date();
-         var domain = getDomainForURL(tab.url);
          var item = getTabData(tab);
-         var domainData = getDomainData(domain);
-
-         addTimeBetweenMoves(domainData, currentDate - item.dateLastMoved);
-         db.setItem(domain, domainData);
 
          item.url = tab.url;
          item.dateLastMoved = new Date();
@@ -232,23 +222,34 @@ chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
    );
 });
 
-chrome.tabs.onRemoved.addListener(function(tabId) {
-   log("tab removed: " + tabId);
-   db.removeItem(tabId);
-}); 
-
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
    log("tab updated: " + tab.id + ":" + tab.url);
-   var currentDate = new Date();
-   var domain = getDomainForURL(tab.url);
    var item = getTabData(tab);
-   var domainData = getDomainData(domain);
   
-   addTimeBetweenUpdates(domainData, currentDate - item.dateLastUpdated); 
-   db.setItem(domain, domainData);
-
    item.url = tab.url;
    item.dateLastUpdated = new Date();
-   item.updateCount += 1;
+   if (changeInfo.status == "complete") {
+      item.updateCount += 1;
+   }
    db.setItem(tabId, item);
+});
+
+chrome.tabs.onRemoved.addListener(function(tabId) {
+   log("tab removed: " + tabId);
+
+   var item = db.getItem(tabId);
+   var currentDate = new Date();
+   var oldDate = parseDate(item.dateCreated);
+   var domain = getDomainForURL(item.url);
+   var domainData = getDomainData(domain);
+
+   addLifeTime(domainData, Math.ceil((currentDate - oldDate)/(1000*60)));
+   addViewCount(domainData, item.viewCount);
+   addUpdateCount(domainData, item.updateCount);
+
+   if (domain != null) {
+      db.setItem(domain, domainData);
+   }
+
+   db.removeItem(tabId);
 });
