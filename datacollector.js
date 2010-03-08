@@ -104,6 +104,25 @@ function parseDate(str) {
  return d;
 }
 
+/*
+* Domain List
+*/
+function getDomains() {
+    if (db.isItemInDB("domains")) {
+        return db.getItem("domains");
+    } else {
+     return "";
+    }
+        
+}
+
+function addDomain(domain) {
+    var domains = getDomains();
+    domains = domains +  domain +",";
+
+    db.setItem("domains",domains);
+}
+
 
 /*
  * Listeners to collect data and store it in HTML5 storage 
@@ -191,6 +210,9 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
    if (domain != null) {
       db.setItem(domain, domainData);
    }
+
+   //add domain to domainList
+   addDomain(domain);
 
    db.removeItem(tabId);
 });

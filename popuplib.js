@@ -19,3 +19,10 @@ DB.prototype.removeItem = function(key) {
 DB.prototype.clear = function(key) {
   this.db.clear(); 
 }
+
+
+log = function(txt) {
+   if(logging) {
+      console.log(txt);
+   }
+}

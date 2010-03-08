@@ -1,13 +1,39 @@
 <html>
 <head>
-<script language="javascript" type="text/javascript" src="popuplib.js"></script> 
-<script language="javascript" type="text/javascript">
-   function test() {
+	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script src="jquery-ui.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="vader/jquery-ui-1.8rc3.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+   <link rel="stylesheet" href="popup.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<script language="javascript" type="text/javascript" src="popuplib.js"></script> 
+	<script language="javascript" type="text/javascript">
+
+   
+function test() {
+	 // UI
+	
+	 
      var db = new DB();
-     db.setItem("foo", "bar");
-     var data = db.getItem("foo");
-     alert(data);
-   }
+     
+
+     var tmp = db.getItem("domains");
+     var domains = tmp.split(",");
+	 var count;
+	 var domain="";
+	 
+	var item;
+
+	for (count in domains) {
+		domain = domains[count];
+		var domainData = db.getItem(domain);
+
+		if ( domainData !=null) {
+			 item = "<div id='shadow-container'><input type='checkbox' name='"+domainData.url+"' value='"+domainData.url+"'>"+domainData.url+"</div>";
+			$('body').append(item);
+		
+		} 
+	}
+	
+}
 </script> 
 <style>
 body{
@@ -17,9 +43,7 @@ body{
 }
 </style>
 </head>
-<body>
-  <p>
-   <input type="button" value="Collect them!" onclick="test()" />
-  </p>
+<body onLoad="test()">
+
 </body>
 </html>
