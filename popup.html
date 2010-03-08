@@ -9,30 +9,25 @@
 
    
 function test() {
-	 // UI
+   // UI
 	
-	 
-     var db = new DB();
+   var db = new DB();
      
-
-     var tmp = db.getItem("domains");
-     var domains = tmp.split(",");
-	 var count;
-	 var domain="";
-	 
+   var tmp = db.getItem("domains");
+   var domains = tmp.split(",");
+   var count;
+   var domain= "";
 	var item;
 
-	for (count in domains) {
-		domain = domains[count];
-		var domainData = db.getItem(domain);
-
-		if ( domainData !=null) {
-			 item = "<div id='shadow-container'><input type='checkbox' name='"+domainData.url+"' value='"+domainData.url+"'>"+domainData.url+"</div>";
-			$('body').append(item);
-		
-		} 
-	}
-	
+   for (count in domains) {
+      domain = domains[count];
+      var domainData = db.getItem(domain);
+      
+      if ( domainData !=null) {
+         item = "<div id='shadow-container'><input type='checkbox' name='"+domainData.url+"' value='"+domainData.url+"'>"+domainData.url+"</div>";
+         $('body').append(item);
+      } 
+   }
 }
 </script> 
 <style>
