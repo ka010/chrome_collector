@@ -50,9 +50,27 @@ DataBase.prototype.isItemInDB = function(key) {
       var item = window.localStorage.getItem(key);
       return (item != null && item != undefined);
    } catch(e) {
-      log("Error inside removeItem() for key:" + key);
+      log("Error inside isItemInDB() for key:" + key);
       log(e);
    }
+}
+
+DataBase.prototype.getAllItems = function() {
+   log('getAllItems()');
+ 
+   var items = new Array(); 
+   
+   try {
+      for (var count = 0; count < window.localStorage.length; count++) {
+         var key = window.localStorage.key(count);
+         items.push(this.getItem(key));
+      }
+   } catch(e) {
+      log("Error inside getAllItems() for key:" + key);
+      log(e);
+   }
+
+   return items;
 }
 
 
