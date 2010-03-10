@@ -1,9 +1,11 @@
 
 /*
- * Data collector
+ * Global stuff
  */
 
 var logging = true;
+var db = new DataBase();
+var domStats = new DomainStats(); 
 
 function getDB() {
    var db = new DataBase();
@@ -14,74 +16,6 @@ log = function(txt) {
    if(logging) {
       console.log(txt);
    }
-}
-
-function getDomainData(url) {
-   if (db.isItemInDB(url)) {
-      return db.getItem(url);
-   } else {
-      return {
-         "url": url,
-
-         "lifeTime": {
-            "count": 0,
-            "time": 0
-         },
-
-         "updateCount": {
-            "count": 0,
-            "updates": 0
-         },
-
-         "viewCount": {
-            "count": 0,
-            "views": 0
-         }
-      }
-   }
-}
-
-function addLifeTime(domainData, lifeTime) {
-   domainData.lifeTime.time += lifeTime;
-   domainData.lifeTime.count += 1;
-}
-
-function getAVGLifeTime(domainData) {
-   if (domainData.lifeTime.count == 0) {
-      return 0;
-   } else {
-      return (domainData.lifeTime.time/domainData.lifeTime.count);
-   }
-}
-
-function addUpdateCount(domainData, updateCount) {
-   domainData.updateCount.updates += updateCount;
-   domainData.updateCount.count += 1;
-}
-
-function getAVGTimeBetweenUpdates(domainData) {
-   if (domainData.updateCount.count == 0) {
-      return 0;
-   } else {
-      return (domainData.updateCount.updates/domainData.updateCount.count);
-   }
-}
-
-function addViewCount(domainData, viewCount) {
-   domainData.viewCount.views += viewCount;
-   domainData.viewCount.count += 1;
-}
-
-function getAVGTimeBetweenViews(domainData) {
-   if (domainData.viewCount.count == 0) {
-      return 0;
-   } else {
-      return (domainData.viewCount.views/domainData.viewCount.count);
-   }
-}
-
-function getDomainForURL(url) {
-   return url.split("/")[2];
 }
 
 function parseDate(str) {
@@ -105,30 +39,9 @@ function parseDate(str) {
 }
 
 /*
-* Domain List
-*/
-function getDomains() {
-    if (db.isItemInDB("domains")) {
-        return db.getItem("domains");
-    } else {
-     return "";
-    }
-        
-}
-
-function addDomain(domain) {
-    var domains = getDomains();
-    domains = domains +  domain +",";
-
-    db.setItem("domains",domains);
-}
-
-
-/*
  * Listeners to collect data and store it in HTML5 storage 
  */
 
-var db = new DataBase();
 
 function getTabData(tab) {
    if (db.isItemInDB(tab.id)) {
@@ -165,6 +78,7 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
          item.dateLastViewed = new Date();
          item.viewCount += 1;
          db.setItem(tabId, item);
+         domStats.addView(tab.url);
       }
    );
 }); 
@@ -178,6 +92,7 @@ chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
          item.url = tab.url;
          item.dateLastMoved = new Date();
          db.setItem(tabId, item);
+         domStats.addMove(tab.url);
       }
    );
 });
@@ -190,7 +105,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
    item.dateLastUpdated = new Date();
    if (changeInfo.status == "complete") {
       item.updateCount += 1;
+      domStats.addUpdate(tab.url);
    }
+
    db.setItem(tabId, item);
 });
 
@@ -200,19 +117,6 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
    var item = db.getItem(tabId);
    var currentDate = new Date();
    var oldDate = parseDate(item.dateCreated);
-   var domain = getDomainForURL(item.url);
-   var domainData = getDomainData(domain);
-
-   addLifeTime(domainData, Math.ceil((currentDate - oldDate)/(1000*60)));
-   addViewCount(domainData, item.viewCount);
-   addUpdateCount(domainData, item.updateCount);
-
-   if (domain != null) {
-      db.setItem(domain, domainData);
-   }
-
-   //add domain to domainList
-   addDomain(domain);
-
+   
    db.removeItem(tabId);
 });
