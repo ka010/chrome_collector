@@ -6,6 +6,11 @@
 var logging = true;
 var domainStats = new DomainStats(); 
 var tabStats = new TabStats();
+var lastSelectedTab = null;
+
+chrome.tabs.getSelected(null, function(tab) {
+   lastSelectedTab = tab;
+});
 
 function getDomainStats() {
    return domainStats;
@@ -19,6 +24,10 @@ function log(txt) {
    if(logging) {
       console.log(txt);
    }
+}
+
+function getDomainForURL(url) {
+   return url.split("/")[2];
 }
 
 /*
@@ -36,6 +45,9 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
    function(tab) {
       log("tab selected: " + tab.id + ":" + tab.url);
       domainStats.addView(tab.url);
+      domainStats.updateLastActivity(lastSelectedTab.url);
+      domainStats.addActivity(tab.url);
+      lastSelectedTab = tab;
       tabStats.updateTabView(tab);
    });
 }); 
@@ -53,6 +65,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
    log("tab updated: " + tab.id + ":" + tab.url);
    if (changeInfo.status == "complete") {
       domainStats.addUpdate(tab.url);
+      if (getDomainForURL(tab.url) != (getDomainForURL(lastSelectedTab.url))) {
+         domainStats.updateLastActivity(lastSelectedTab.url);
+         domainStats.addActivity(tab.url);
+      }
       tabStats.updateTabUpdates(tab);
    }
 });

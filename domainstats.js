@@ -13,6 +13,27 @@ function DomainStats () {
       db.setItem(data.domain, data); 
    }
 
+   this.addActivity = function(url) {
+      var data = getDomainData(url);
+      var time = new Date();
+      data.activities.push(getActivity(time, time));
+      db.setItem(data.domain, data); 
+   }
+
+   this.updateLastActivity = function(url) {
+      var data = getDomainData(url);
+      var activity = data.activities.pop();
+
+      if (activity != undefined) {
+         activity.endTime = new Date();
+         data.activities.push(activity);
+         console.log("start:" + activity.startTime + "end: " +  activity.endTime);
+      }
+
+      db.setItem(data.domain, data); 
+   }
+
+
    this.addUpdate = function(url) {
       var data = getDomainData(url);
       data.updates += 1;
@@ -28,7 +49,6 @@ function DomainStats () {
    this.getAllDomains = function() {
       var all = db.getAllItems(); 
       domains = all.filter(function(item) {
-         console.log(item.domain);
          return (item.domain != undefined);
       });
       return domains;
@@ -45,9 +65,17 @@ function DomainStats () {
             "views": 0,
             "updates": 0,
             "moves": 0,
-            "activities": []
+            "activities": [
+            ]
          }
       }
+   }
+
+   function getActivity(startTime, endTime) {
+      return {
+         "startTime": startTime,
+         "endTime": endTime
+      };
    }
 
    function getDomainForURL(url) {

@@ -7,11 +7,11 @@ function TabStats () {
    var db = new DataBase();
 
    this.addTab = function(tab) {
-      db.setItem(tab.id, getData(tab)); 
+      db.setItem(tab.id, getTabData(tab)); 
    }
-
+   
    this.removeTab = function(tabId) {
-      db.removeItem(tab.id);
+      db.removeItem(tabId);
    }
 
    this.updateTabView = function(tab) {
