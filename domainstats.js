@@ -1,13 +1,40 @@
 
 /*
- * Domain statg
+ * Domain stats
  */
 
 
 function DomainStats () {
    var db = new DataBase();
 
-   this.getDomainData = function(url) {
+   this.addView = function(url) {
+      var data = getDomainData(url);
+      data.views += 1;
+      db.setItem(data.domain, data); 
+   }
+
+   this.addUpdate = function(url) {
+      var data = getDomainData(url);
+      data.updates += 1;
+      db.setItem(data.domain, data); 
+   }
+
+   this.addMove = function(url) {
+      var data = getDomainData(url);
+      data.moves += 1;
+      db.setItem(data.domain, data); 
+   }
+
+   this.getAllDomains = function() {
+      var all = db.getAllItems(); 
+      domains = all.filter(function(item) {
+         console.log(item.domain);
+         return (item.domain != undefined);
+      });
+      return domains;
+   }
+
+   getDomainData = function(url) {
       var domain = getDomainForURL(url);
 
       if (db.isItemInDB(domain)) {
@@ -23,30 +50,18 @@ function DomainStats () {
       }
    }
 
-   this.setDomainData = function(data) {
-     db.setItem(data.domain, data); 
-   }
-
    function getDomainForURL(url) {
       return url.split("/")[2];
    }
 
 }
 
-DomainStats.prototype.addView = function(url) {
-   var data = this.getDomainData(url);
-   data.views += 1;
-   this.setDomainData(data);
-}
 
-DomainStats.prototype.addUpdate = function(url) {
-   var data = this.getDomainData(url);
-   data.updates += 1;
-   this.setDomainData(data);
-}
 
 DomainStats.prototype.addMove = function(url) {
    var data = this.getDomainData(url);
    data.moves += 1;
    this.setDomainData(data);
 }
+
+

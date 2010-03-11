@@ -1,28 +1,16 @@
 
-function DB() {
-  this.db = chrome.extension.getBackgroundPage().getDB(); 
-}
-
-DB.prototype.getItem = function(key) {
-  return this.db.getItem(key); 
-}
-
-DB.prototype.setItem= function(key, value) {
-  this.db.setItem(key, value); 
-}
+var tabStats = chrome.extension.getBackgroundPage().getTabStats();
+var domainStats = chrome.extension.getBackgroundPage().getDomainStats();
 
 
-DB.prototype.removeItem = function(key) {
-  this.db.removeItem(key); 
-}
+function render() {
+   var tabs = tabStats.getAllTabs();
 
-DB.prototype.clear = function(key) {
-  this.db.clear(); 
-}
-
-
-log = function(txt) {
-   if(logging) {
-      console.log(txt);
+   for (count in tabs) {
+      if (count != null) {
+         var tab = tabs[count];
+         var item = "<div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon'/><input type='checkbox' name='" + tab.url + "' value='" + tab.url + "'>" + tab.title + "</div>";
+         $('body').append(item);
+      } 
    }
 }
