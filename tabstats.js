@@ -57,11 +57,20 @@ function TabStats () {
       return tabs;
    }
 
+   this.getCollectedTabs = function() {
+      var all = this.getAllTabs();
+      var avgScore = getAvgClosedScore();
+      tabs = all.filter(function(tabData) {
+         return (Math.abs(tabData - avgScore) > 2);
+      });
+      return tabs;
+   }
+
    this.getTab = function(tabID) {
       return db.getItem(tabID);
    }
 
-   this.getAvgOpenScore = function() {
+   getAvgOpenScore = function() {
       var allTabs = this.getAllTabs();
       var totalScore = 0;
       allTabs.forEach(function(tabData) {
@@ -70,7 +79,7 @@ function TabStats () {
       return (totalScore / allTabs.length);
    }
 
-   this.getAvgClosedScore = function() {
+   getAvgClosedScore = function() {
       var allScores = db.getItem("tabScores");
       if (allScores != null && allScores.length > 0) {
          var totalScore = 0;
