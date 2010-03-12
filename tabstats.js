@@ -61,7 +61,7 @@ function TabStats () {
       var all = this.getAllTabs();
       var avgScore = getAvgClosedScore();
       tabs = all.filter(function(tabData) {
-         return (Math.abs(tabData - avgScore) > 2);
+            return (Math.abs(tabData.score - avgScore) < 2);
       });
       return tabs;
    }
