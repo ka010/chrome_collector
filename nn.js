@@ -43,16 +43,3 @@ Net.prototype.init = function(INPUT,HIDDEN,OUTPUT) {
 }
 
 
-
-function test() {
- var FEATURES = 4;
- var CLASSES = 2;
- var input = Matrix.Zero(10,FEATURES);
- var output = Matrix.Zero(10,CLASSES);
- 
- net = new Net;
- net.init(2,2,2);
-
- 
- alert(net.hiddens.elements);   
-}
