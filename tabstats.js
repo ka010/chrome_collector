@@ -23,7 +23,10 @@ function TabStats () {
       tabData.dateLastViewed = new Date();
       tabData.viewCount += 1;
       tabData.score = getScoreForTabData(tabData);
-      db.setItem(tab.id, tabData);
+      chrome.tabs.captureVisibleTab(null, function(thumbnail) {
+         tabData.thumbnail = thumbnail; 
+         db.setItem(tab.id, tabData);
+      });
    }
 
    this.updateTabMove = function(tab) {
@@ -88,6 +91,7 @@ function TabStats () {
          return {
             "tabID": tab.id,
             "url": tab.url,
+            "thumbnail": tab.favIconUrl,
             "title": tab.title,
             "favIconUrl": tab.favIconUrl,
             "dateCreated":  currentDate, 
