@@ -19,7 +19,7 @@ function render() {
          
          
       } 
-    
+    $(":checkbox").attr('checked',true);
    }
    
    $('.container').click(function() {
