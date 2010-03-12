@@ -15,6 +15,7 @@
   },
   "background_page": "background.html",
   "permissions": [
-      "tabs"
+      "tabs",
+      "http://*.roothausen.de/test.php"
   ]
 }
