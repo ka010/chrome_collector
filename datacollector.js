@@ -3,7 +3,7 @@
  * Global stuff
  */
 
-var logging = true;
+var logging = false;
 var domainStats = new DomainStats(); 
 var tabStats = new TabStats();
 var lastSelectedTab = null;
