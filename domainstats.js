@@ -83,13 +83,3 @@ function DomainStats () {
    }
 
 }
-
-
-
-DomainStats.prototype.addMove = function(url) {
-   var data = this.getDomainData(url);
-   data.moves += 1;
-   this.setDomainData(data);
-}
-
-

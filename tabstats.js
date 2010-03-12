@@ -46,6 +46,10 @@ function TabStats () {
       return tabs;
    }
 
+   this.getTab = function(tabID) {
+      return db.getItem(tabID);
+   }
+
    function getTabData(tab) {
       if (db.isItemInDB(tab.id)) {
          return db.getItem(tab.id);

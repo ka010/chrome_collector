@@ -75,5 +75,30 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 chrome.tabs.onRemoved.addListener(function(tabId) {
    log("tab removed: " + tabId);
+   sendData(tabStats.getTab(tabId));
    tabStats.removeTab(tabId)
 });
+
+
+/*
+ * HTTP HELPER
+ */
+
+function sendData(tabdata) {
+   var data = "tabdata=" + encodeURIComponent(JSON.stringify(tabdata));
+   httpPost(data);
+}
+
+function httpPost(data) {
+   var xhr = new XMLHttpRequest();
+   var url = "http://pub.roothausen.de/test.php";
+   xhr.open("POST", url, true, username, password);
+   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+   xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+         console.log(xhr.responseText);
+      }
+   }
+   xhr.send(data);
+}
