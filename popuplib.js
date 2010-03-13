@@ -5,18 +5,21 @@ var domainStats = chrome.extension.getBackgroundPage().getDomainStats();
 
 function render() {
    
-   var button = "<div class='container'><input type='button' value='Clean Up!' onClick='cleanUp();'/></div>"
-   $('body').append(button);
    
    var tabs = tabStats.getCollectedTabs();
    for (count in tabs) {
       if (count != null) {
          var tab = tabs[count];
-         var thumb = "<img class='thumb' width='250px' height='250px' src='"+tab.thumbnail+"'/>";
-         var item = "<div id ='"+tab.tabID+ "' class='container'><img src='" + tab.favIconUrl + "' alt='favicon'/><input type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div>";
-         
-         $('body').append(item);
-         
+		 var thumbSize = "200px"
+		 if(tab.favIconUrl == undefined || tab.favIconUrl == ""){
+			tab.favIconUrl = "icon.png";
+		 }
+		 if(tab.thumbnail == undefined){
+		 tab.thumbnail = "icon.png";
+		 thumbSize = "100px";
+		 }
+         var item = "<li class='ui-widget-content' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
+         $('.list').append(item);
          
       } 
     $(":checkbox").attr('checked',true);
@@ -30,10 +33,10 @@ function render() {
 }
 
 function cleanUp() {
-    $(':checked').each(function(x) {
+    $('input[type=checkbox]:checked').each(function(x) {
 
         chrome.tabs.remove(parseInt(this.value));
         $('#'+this.value).hide('slow');
-     //   $('#'+this.value).remove();
+     //$('#'+this.value).remove();
     });
 }
