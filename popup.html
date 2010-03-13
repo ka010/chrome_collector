@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html>
 <head>
 	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
@@ -8,46 +10,35 @@
 	<script type="text/javascript" src="jquery-ui-1.8rc3.custom.min.js"></script> 
 	<script type="text/javascript" src="screenshot.js"></script>
 	<style type="text/css">
-		
 		#feedback { font-size: 0.8em; }
 		#selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; height: 250px; overflow-y: scroll; }
 		#selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; height: 30px; background: #D4E7FA}
-		
-		</style>
+
+	   body{
+         overflow: hidden;
+         width: 600px;
+         height: 300px;
+      }
+   
+      #screenshot{
+	      position:absolute;
+	      border:1px solid #529BF9;
+	      background:#D4E7FA;
+	      padding:5px;
+	      display:none;
+	      color:#D4E7FA;
+	      -webkit-border-radius: 6px; border-radius: 6px;
+	   }	
+   </style>
 	
 	<script language="javascript" type="text/javascript">
 	$(function(){
-				
 				render();
-			
 				$('#tabs').tabs();
-				
 				$("button, input:submit, a", ".buttons").button();
-				
-				
 				screenshotPreview();
-				
-			});
-			
-
+   });
 </script> 
-<style>
-   body{
-      overflow: hidden;
-      width: 600px;
-      height: 300px;
-   }
-   
-   #screenshot{
-	position:absolute;
-	border:1px solid #529BF9;
-	background:#D4E7FA;
-	padding:5px;
-	display:none;
-	color:#D4E7FA;
-	-moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px;
-	}
-</style>
    </head>
     <body>
       <div id="tabs">
@@ -56,7 +47,6 @@
             <li style="width:287px;"><a href="#tabs-2">Recently closed Tabs</a></li>
          </ul>
          <div id="tabs-1" class="close">
-
             <div>
                <ol id="selectable" class="list" />
             </div>
@@ -72,7 +62,6 @@
                <button>Restore Tabs</button>
             </div>
          </div>
-      
       </div>   
    </body>
-
+</html>
