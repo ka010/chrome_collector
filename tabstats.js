@@ -136,7 +136,8 @@ function TabStats () {
          closedTabs = new Array();
       }
       closedTabs.push(tabData);
-      db.setItem("closedTabs", closedTabs.slice(0, 10));
+      var range = closedTabs.length > 10 ? closedTabs.length - 10 : 0;
+      db.setItem("closedTabs", closedTabs.slice(range));
    }
 
 
