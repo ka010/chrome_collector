@@ -4,12 +4,12 @@ var domainStats = chrome.extension.getBackgroundPage().getDomainStats();
 
 
 function render() {
-   
-   
+
    var tabs = tabStats.getCollectedTabs();
    for (count in tabs) {
       if (count != null) {
          var tab = tabs[count];
+
 		 var thumbSize = "200px"
 		 if(tab.favIconUrl == undefined || tab.favIconUrl == ""){
 			tab.favIconUrl = "icon.png";
@@ -22,17 +22,17 @@ function render() {
          $('.list').append(item);
          
       } 
-    $(":checkbox").attr('checked',true);
+      $(":checkbox").attr('checked',true);
    }
-   
-   $('.container').click(function() {
 
-   $("input[value="+this.id+"]").attr('checked',!($("input[value="+this.id+"]").attr('checked')));
+   $('.container').click(function() {
+      $("input[value="+this.id+"]").attr('checked',!($("input[value="+this.id+"]").attr('checked')));
    });
 
 }
 
 function cleanUp() {
+
     $('input[type=checkbox]:checked').each(function(x) {
 
         chrome.tabs.remove(parseInt(this.value));
