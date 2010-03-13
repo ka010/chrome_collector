@@ -27,7 +27,6 @@ function DomainStats () {
       if (activity != undefined) {
          activity.endTime = new Date();
          data.activities.push(activity);
-         console.log("start:" + activity.startTime + "end: " +  activity.endTime);
       }
 
       db.setItem(data.domain, data); 

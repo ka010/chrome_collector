@@ -14,6 +14,7 @@ function TabStats () {
 
    this.removeTab = function(tabId) {
       var tabData = db.getItem(tabId);
+      addClosedTab(tabData);
       addClosedTabScore(tabData.score);
       db.removeItem(tabId);
    }
@@ -61,9 +62,14 @@ function TabStats () {
       var all = this.getAllTabs();
       var avgScore = getAvgClosedScore();
       tabs = all.filter(function(tabData) {
-            return (Math.abs(tabData.score - avgScore) < 2);
+            return (tabData.score - avgScore < 2);
       });
       return tabs;
+   }
+
+   this.getClosedTabs = function() {
+      var closedTabs = db.getItem("closedTabs");
+      return closedTabs;
    }
 
    this.getTab = function(tabID) {
@@ -124,9 +130,19 @@ function TabStats () {
       db.setItem("tabScores", allScores);
    }
 
+   function addClosedTab(tabData) {
+      var closedTabs = db.getItem("closedTabs");
+      if (closedTabs == null) {
+         closedTabs = new Array();
+      }
+      closedTabs.push(tabData);
+      db.setItem("closedTabs", closedTabs.slice(0, 10));
+   }
+
+
 
    function getScoreForTabData(tabData) {
-      var score = tabData.viewCount + tabData.moveCount + tabData.updateCount; 
+      var score = tabData.viewCount * 1.2 + tabData.moveCount * 1.0 + tabData.updateCount * 0.8; 
       return score;
    }
 }
