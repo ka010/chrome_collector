@@ -18,7 +18,7 @@ function render() {
 		 tab.thumbnail = "icon.png";
 		 thumbSize = "100px";
 		 }
-         var item = "<li class='ui-widget-content' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
+         var item = "<li class='listitem' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
          $('.list').append(item);
          
       } 
@@ -33,7 +33,7 @@ function render() {
 
 function cleanUp() {
 
-    $('input[type=checkbox]:checked').each(function(x) {
+    $(':checked').each(function(x) {
 
         chrome.tabs.remove(parseInt(this.value));
         $('#'+this.value).hide('slow');

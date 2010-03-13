@@ -1,7 +1,6 @@
 <html>
 <head>
 	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
-   <link rel="stylesheet" href="popup.css" type="text/css" media="screen" title="no title" charset="utf-8">
    <link type="text/css" href="css/cupertino/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
 	<script language="javascript" type="text/javascript" src="popuplib.js"></script> 
 	<script language="javascript" type="text/javascript" src="slp.js"></script> 
@@ -11,12 +10,11 @@
 	<style type="text/css">
 		
 		#feedback { font-size: 0.8em; }
-		#selectable .ui-selecting { background: #f2f5f7; }
-		#selectable .ui-selected { background: #f2f5f7; color: black; }
 		#selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; height: 250px; overflow-y: scroll; }
-		#selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; height: 30px; }
+		#selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; height: 30px; background: #D4E7FA}
 		
 		</style>
+	
 	<script language="javascript" type="text/javascript">
 	$(function(){
 				
@@ -26,17 +24,6 @@
 				
 				$("button, input:submit, a", ".buttons").button();
 				
-				$('#selectable').selectable({
-					stop: function(){
-					var result = $("#select-result").empty();
-						$(".ui-selected", this).each(function(){
-							var index = $("#selectable li").index(this);
-							if(index != -1){
-							result.append(" #" + (index));
-							}
-						});
-					}
-				});
 				
 				screenshotPreview();
 				
@@ -62,34 +49,30 @@
 	}
 </style>
    </head>
-   <body>
-   <div style="float: left; margin-left: 40%; position: absolute;" id="switcher"></div>
-		<div id="tabs">
-			<ul>
-				<li><a href="#tabs-1">Tabs to close</a></li>
-				<li><a href="#tabs-2">Recently closed Tabs</a></li>
-			</ul>
-			<div id="tabs-1" class="close">
-			
-				<div height = "300px">
-					<ol id="selectable" class="list" >
-					</ol>
-				</div>
-				<div class="buttons">
-					<button onClick="cleanUp();">Remove unused Tabs</button>
-				</div>
-			</div>
-			<div id="tabs-2">
-				<div height = "300px">
-					<ol id="selectable" class="list" >
-					</ol>
-				</div>
-				<div class="buttons">
-					<button>Restore Tabs</button>
-				</div>
-			</div>
-		
-		</div>	
+    <body>
+      <div id="tabs">
+         <ul>
+            <li style="width:287px;"><a href="#tabs-1">Tabs to close</a></li>
+            <li style="width:287px;"><a href="#tabs-2">Recently closed Tabs</a></li>
+         </ul>
+         <div id="tabs-1" class="close">
+
+            <div>
+               <ol id="selectable" class="list" />
+            </div>
+            <div class="buttons">
+               <button onClick="cleanUp();">Remove unused Tabs</button>
+            </div>
+         </div>
+         <div id="tabs-2">
+            <div>
+               <ol id="selectable" class="list" />
+            </div>
+            <div class="buttons">
+               <button>Restore Tabs</button>
+            </div>
+         </div>
+      
+      </div>   
    </body>
-</html>
 
