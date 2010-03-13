@@ -25,7 +25,7 @@ function render() {
       $(":checkbox").attr('checked',true);
    }
 
-   $('.container').click(function() {
+   $('.listitem').click(function() {
       $("input[value="+this.id+"]").attr('checked',!($("input[value="+this.id+"]").attr('checked')));
    });
 
