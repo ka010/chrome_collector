@@ -1,7 +1,4 @@
-
 var tabStats = chrome.extension.getBackgroundPage().getTabStats();
-var domainStats = chrome.extension.getBackgroundPage().getDomainStats();
-
 
 function render() {
    var collectedTabs = tabStats.getCollectedTabs();
