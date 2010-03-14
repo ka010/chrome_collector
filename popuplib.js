@@ -4,36 +4,52 @@ var domainStats = chrome.extension.getBackgroundPage().getDomainStats();
 
 
 function render() {
-   
-   var button = "<div class='container'><input type='button' value='Clean Up!' onClick='cleanUp();'/></div>"
-   $('body').append(button);
-   
-   var tabs = tabStats.getCollectedTabs();
-   for (count in tabs) {
-      if (count != null) {
-         var tab = tabs[count];
-         var thumb = "<img class='thumb' width='250px' height='250px' src='"+tab.thumbnail+"'/>";
-         var item = "<div id ='"+tab.tabID+ "' class='container'><img src='" + tab.favIconUrl + "' alt='favicon'/><input type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div>";
-         
-         $('body').append(item);
-         
-         
-      } 
-    $(":checkbox").attr('checked',true);
-   }
-   
-   $('.container').click(function() {
+   var collectedTabs = tabStats.getCollectedTabs();
+   var coList = createList(collectedTabs);
+   var closedTabs = tabStats.getClosedTabs();
+   var clList = createList(closedTabs);
 
-   $("input[value="+this.id+"]").attr('checked',!($("input[value="+this.id+"]").attr('checked')));
+   coList.forEach(function(item) {
+      $('.list1').append(item);
+   });
+
+   clList.forEach(function(item) {
+      $('.list2').append(item);
+   });
+
+   $('.listitem').click(function() {
+      $("input[value="+this.id+"]").attr('checked',!($("input[value="+this.id+"]").attr('checked')));
    });
 
 }
 
-function cleanUp() {
-    $(':checked').each(function(x) {
+function createList(data) {
+   var list = new Array();
+   data.forEach(function(tab) {
 
-        chrome.tabs.remove(parseInt(this.value));
-        $('#'+this.value).hide('slow');
-     //   $('#'+this.value).remove();
-    });
+      if(tab != null) {
+         var thumbSize = "200px"
+         if(tab.favIconUrl == undefined || tab.favIconUrl == ""){
+            tab.favIconUrl = "icon.png";
+         }
+
+         if(tab.thumbnail == undefined){
+            tab.thumbnail = "icon.png";
+            thumbSize = "100px";
+         }
+
+         var item = "<li class='listitem' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input class='checkitem' type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
+
+         list.push(item);
+      }
+   });    
+
+   return list;
+}
+
+function cleanUp() {
+   $(':checked').each(function(x) {
+      chrome.tabs.remove(parseInt(this.value));
+      $('#'+this.value).hide('slow');
+   });
 }

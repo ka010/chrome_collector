@@ -1,20 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
-   <link rel="stylesheet" href="popup.css" type="text/css" media="screen" title="no title" charset="utf-8">
+   <link type="text/css" href="css/cupertino/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
 	<script language="javascript" type="text/javascript" src="popuplib.js"></script> 
 	<script language="javascript" type="text/javascript" src="classifier.js"></script> 
-	<script language="javascript" type="text/javascript" src="mlp.js"></script> 
 	<script language="javascript" type="text/javascript" src="sylvester.js"></script> 
+
+	<script language="javascript" type="text/javascript" src="sylvester.js"></script>	
+	<script type="text/javascript" src="jquery-ui-1.8rc3.custom.min.js"></script> 
+	<script type="text/javascript" src="screenshot.js"></script>
+	<style type="text/css">
+      
+		#selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; height: 250px; overflow-y: scroll; }
+		#selectable li { margin: 2px; padding: 0.2em; font-size: 0.8em; height: 30px; background: #D4E7FA}
+
+	   body{
+         overflow: hidden;
+         width: 600px;
+         height: 300px;
+      }
+   
+      #screenshot{
+	      position:absolute;
+	      border:1px solid #529BF9;
+	      background:#D4E7FA;
+	      padding:5px;
+	      display:none;
+	      color:#D4E7FA;
+	      -webkit-border-radius: 6px; border-radius: 6px;
+	   }	
+   </style>
+	
 	<script language="javascript" type="text/javascript">
-
-
+	$(function(){
+				render();
+				$('#tabs').tabs();
+				$("button, input:submit, a", ".buttons").button();
+				screenshotPreview();
+   });
 </script> 
-
-
    </head>
+<<<<<<< HEAD
    <body onLoad="render(); ">
        <input type='button' value='test' onClick='test();'/>
    
+=======
+    <body>
+      <div id="tabs">
+         <ul>
+            <li style="width:287px;"><a href="#tabs-1">Tabs to close</a></li>
+            <li style="width:287px;"><a href="#tabs-2">Recently closed Tabs</a></li>
+         </ul>
+         <div id="tabs-1" class="close">
+            <div>
+               <ol id="selectable" class="list1" />
+            </div>
+            <div class="buttons">
+               <button onClick="cleanUp();">Remove unused Tabs</button>
+            </div>
+         </div>
+         <div id="tabs-2">
+            <div>
+               <ol id="selectable" class="list2" />
+            </div>
+            <div class="buttons">
+               <button>Restore Tabs</button>
+            </div>
+         </div>
+      </div>   
+>>>>>>> pfleidi/master
    </body>
 </html>

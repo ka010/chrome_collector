@@ -36,7 +36,9 @@ function getDomainForURL(url) {
 
 chrome.tabs.onCreated.addListener(function(tab) {
    log("tab created: " + tab.id + ":" + tab.url);
-   tabStats.addTab(tab);
+   if (isTabStored(tab.url)) {
+      tabStats.addTab(tab);
+   }
 }); 
 
 
@@ -48,7 +50,9 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
       domainStats.updateLastActivity(lastSelectedTab.url);
       domainStats.addActivity(tab.url);
       lastSelectedTab = tab;
-      tabStats.updateTabView(tab);
+      if (isTabStored(tab.url)) {
+         tabStats.updateTabView(tab);
+      }
    });
 }); 
 
@@ -57,7 +61,9 @@ chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
    function(tab) {
       log("tab moved: " + tab.id + ":" + tab.url);
       domainStats.addMove(tab.url);
-      tabStats.updateTabMove(tab);
+      if (isTabStored(tab.url)) {
+         tabStats.updateTabMove(tab);
+      }
    });
 });
 
@@ -69,36 +75,21 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
          domainStats.updateLastActivity(lastSelectedTab.url);
          domainStats.addActivity(tab.url);
       }
-      tabStats.updateTabUpdates(tab);
+
+      if (isTabStored(tab.url)) {
+         tabStats.updateTabUpdates(tab);
+      }
    }
 });
 
 chrome.tabs.onRemoved.addListener(function(tabId) {
    log("tab removed: " + tabId);
-   sendData(tabStats.getTab(tabId));
-   tabStats.removeTab(tabId)
+   if (isTabStored(tab.url)) {
+      tabStats.removeTab(tabId)
+   }
 });
 
-
-/*
- * HTTP HELPER
- */
-
-function sendData(tabdata) {
-   var data = "tabdata=" + encodeURIComponent(JSON.stringify(tabdata));
-   httpPost(data);
-}
-
-function httpPost(data) {
-   var xhr = new XMLHttpRequest();
-   var url = "http://pub.roothausen.de/test.php";
-   xhr.open("POST", url, true, username, password);
-   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-   xhr.onreadystatechange = function() {
-      if(xhr.readyState == 4) {
-         console.log(xhr.responseText);
-      }
-   }
-   xhr.send(data);
+function isTabStored(url) {
+   var matchesExtension = url.match(/^chrome(.*):/);
+   return (url != "chrome://devtools/devtools.html" && matchesExtension); 
 }
