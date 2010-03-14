@@ -9,7 +9,7 @@ function DataBase() {
 DataBase.prototype.setItem = function(key, value) {
    value = JSON.stringify(value);
    try {
-      log("setItem(): " + key + ": " + value);
+      log("setItem(): " + key);
       window.localStorage.setItem(key, value);
    } catch(e) {
       log("Error inside setItem");

@@ -3,7 +3,7 @@
  * Global stuff
  */
 
-var logging = false;
+var logging = true;
 var domainStats = new DomainStats(); 
 var tabStats = new TabStats();
 var lastSelectedTab = null;
@@ -84,9 +84,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 chrome.tabs.onRemoved.addListener(function(tabId) {
    log("tab removed: " + tabId);
-   if (isTabStored(tab.url)) {
-      tabStats.removeTab(tabId)
-   }
+   tabStats.removeTab(tabId)
 });
 
 function isTabStored(url) {
