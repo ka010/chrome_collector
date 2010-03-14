@@ -88,6 +88,6 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 });
 
 function isTabStored(url) {
-   var matchesExtension = url.match(/^chrome(.*):/);
-   return (url != "chrome://devtools/devtools.html" && matchesExtension); 
+   var matchesExtension = (/^chrome(.*):/.test(url));
+   return (url != "chrome://devtools/devtools.html" && !matchesExtension); 
 }
