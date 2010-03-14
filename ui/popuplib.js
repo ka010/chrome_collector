@@ -17,10 +17,10 @@ function render() {
    $('.listitem').click(function() {
       $("input[value="+this.id+"]").attr('checked',!($("input[value="+this.id+"]").attr('checked')));
    });
-   
+
    $(':checkbox').click(function() {
-       $("input[value="+this.value+"]").attr('checked',!($("input[value="+this.value+"]").attr('checked')));
-    });
+      $("input[value="+this.value+"]").attr('checked',!($("input[value="+this.value+"]").attr('checked')));
+   });
 
 }
 
@@ -40,7 +40,6 @@ function createList(data,id) {
          }
 
          var item = "<li class='listitem' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div class='"+id+"'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input class='checkitem' type='checkbox' checked='true' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
-	console.log(tab.title);
          list.push(item);
       }
    });    
@@ -50,23 +49,21 @@ function createList(data,id) {
 }
 
 function cleanUp() {
-   $(':checked').each(function(x) {
+   $('.tablist1 > input:checkbox:checked').each(function(x) {
       chrome.tabs.remove(parseInt(this.value));
       $('#'+this.value).hide('slow');
+   });
+   
+   $('.tablist1 > input:checkbox:not(:checked)').each(function(x) {
+      tabStats.addUserScoreForTab(parseInt(this.value));
    });
 }
 
 function restoreTabs() {
-    
-             $('.tablist2 > input:checkbox:checked').each(function(i) {
-               
-               var props = {
-                   'url': this.name
-               };
-                chrome.tabs.create(props);
-                
-             });
-     
-
-  
+   $('.tablist2 > input:checkbox:checked').each(function(i) {
+      var props = {
+         'url': this.name
+      };
+      chrome.tabs.create(props);
+   });
 }
