@@ -5,7 +5,10 @@
 
 function TabStats () {
    var db = new DataBase();
-
+   var classifier = new MLP;
+   classifier.init(4,4,4);
+   classifier.load(db.getItem('classifierState'));
+   
    this.addTab = function(tab) {
       var tabData = getTabData(tab);
       tabData.score = getScoreForTabData(tabData);
@@ -16,7 +19,11 @@ function TabStats () {
       var tabData = db.getItem(tabId);
       addClosedTab(tabData);
       addClosedTabScore(tabData.score);
+      classifier.train(tabData);
+      var classifierState=classifier.store();
+      db.setItem('classifierState',classifierState);
       db.removeItem(tabId);
+
    }
 
    this.updateTabView = function(tab) {
