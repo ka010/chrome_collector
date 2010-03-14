@@ -6,12 +6,13 @@
 function TabStats () {
    var db = new DataBase();
    var classifier = new MLP;
+  
    classifier.init(4,4,4);
    if (db.getItem('classifierState') != null) {
        classifier.load(db.getItem('classifierState'));
    } 
 
-   
+
    this.addTab = function(tab) {
       var tabData = getTabData(tab);
       tabData.score = getScoreForTabData(tabData);
@@ -22,7 +23,7 @@ function TabStats () {
       var tabData = db.getItem(tabId);
       addClosedTab(tabData);
       addClosedTabScore(tabData.score);
-      
+
       // train neural network
       classifier.train(tabData);
       
@@ -103,6 +104,15 @@ function TabStats () {
    this.getTab = function(tabID) {
       return db.getItem(tabID);
    }
+   
+   this.addUserScoreForTab = function(tabID) {
+      var tabData = this.getTab(tabID);
+      if (tabID != null) {
+         tabData.userScore += 3;
+         tabData.score = getScoreForTabData(tabData);
+      } 
+      db.setItem(tabID, tabData);
+   } 
 
    getAvgOpenScore = function() {
       var allTabs = this.getAllTabs();
@@ -125,7 +135,6 @@ function TabStats () {
       return 0;
    }
 
-
    function getTabData(tab) {
       if (db.isItemInDB(tab.id)) {
          return db.getItem(tab.id);
@@ -144,6 +153,7 @@ function TabStats () {
             "viewCount": 0,
             "moveCount": 0,
             "updateCount": 0,
+            "userScore": 0,
             "score": 0
          };  
       }
@@ -168,10 +178,9 @@ function TabStats () {
       db.setItem("closedTabs", closedTabs.slice(range));
    }
 
-
-
    function getScoreForTabData(tabData) {
-      var score = tabData.viewCount * 1.2 + tabData.moveCount * 1.0 + tabData.updateCount * 0.8; 
+      var score = tabData.viewCount * 1.2 + tabData.moveCount + tabData.updateCount * 0.8 + tabData.userScore; 
       return score;
    }
+
 }
