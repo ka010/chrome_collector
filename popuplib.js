@@ -39,7 +39,7 @@ function createList(data) {
          }
 
          var item = "<li class='listitem' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input class='checkitem' type='checkbox' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
-
+	console.log(tab.title);
          list.push(item);
       }
    });    
