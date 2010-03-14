@@ -7,7 +7,10 @@ function TabStats () {
    var db = new DataBase();
    var classifier = new MLP;
    classifier.init(4,4,4);
-  // classifier.load(db.getItem('classifierState'));
+   if (db.getItem('classifierState') != null) {
+       classifier.load(db.getItem('classifierState'));
+   } 
+
    
    this.addTab = function(tab) {
       var tabData = getTabData(tab);
@@ -21,11 +24,11 @@ function TabStats () {
       addClosedTabScore(tabData.score);
       
       // train neural network
-   //   classifier.train(tabData);
+      classifier.train(tabData);
       
       // persist neural network
-    //  var classifierState=classifier.store();
-    //  db.setItem('classifierState',classifierState);
+      var classifierState=classifier.store();
+      db.setItem('classifierState',classifierState);
       
       db.removeItem(tabId);
 

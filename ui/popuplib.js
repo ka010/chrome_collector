@@ -25,6 +25,11 @@ function render() {
        $("input[value="+this.value+"]").attr('checked',!($("input[value="+this.value+"]").attr('checked')));
     });
 
+    $('.tablist2 > input:checkbox').each(function(i) {
+            $('#'+this.value).attr('checked',false);
+    });
+
+    
 }
 
 function createList(data,id) {
@@ -61,15 +66,13 @@ function cleanUp() {
 
 function restoreTabs() {
     
-             $('.tablist2 > input:checkbox:checked').each(function(i) {
+    $('.tablist2 > input:checkbox:checked').each(function(i) {
                
-               var props = {
-                   'url': this.name
-               };
-                chrome.tabs.create(props);
-                
-             });
+        var props = {
+           'url': this.name
+         };
+        chrome.tabs.create(props);
+        $('#'+this.value).hide('slow');
+    });
      
-
-  
 }
