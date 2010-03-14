@@ -9,7 +9,7 @@
 function Layer() {
     this.units=0;
     this.output;
-    this.error;
+    this.err;
     this.weight;
     this.dweight;
 }
@@ -18,7 +18,7 @@ function Layer() {
 Layer.prototype.init = function (units) {
     this.units = units;
     this.output = Vector.Zero(units);
-    this.error = Vector.Zero(units);
+    this.err = Vector.Zero(units);
     this.weight = Matrix.Zero(units,units);
     this.dweight = Matrix.Zero(units,units);
     
@@ -36,8 +36,7 @@ Layer.prototype.init = function (units) {
         this.weight.elements[k] = weights.elements;
 
     }
-    
-    console.log("weights: " + w.inspect());
+
 }
 
 Layer.prototype.propagate = function(outputLayer) {
@@ -58,7 +57,7 @@ function MLP() {
     this.hiddenLayer = new Layer;
     this.outputLayer = new Layer;
     this.eta=0.02;
-    this.alpha=0;
+    this.alpha=1;
     this.learningRate=0.02;
     this.gain=1;
     this.error=0;
@@ -88,8 +87,9 @@ MLP.prototype.getOutput = function() {
 
 //      P R O P A G A T E   S I G N A L S 
 MLP.prototype.propagate = function() {
-    this.propagateLayer(this.inputLayer,this.outputLayer);
+    this.propagateLayer(this.inputLayer,this.hiddenLayer);
     this.propagateLayer(this.hiddenLayer,this.outputLayer);
+
 }
 
 MLP.prototype.propagateLayer = function(lower,upper) {
@@ -101,7 +101,9 @@ MLP.prototype.propagateLayer = function(lower,upper) {
           sum = sum+ upper.weight.elements[i-1][k-1] * y;
        });
        upper.output.elements[i-1] = 1.0 / (1.0 + Math.exp(-sum));
+     
     });
+    
 }
 
 
@@ -118,9 +120,9 @@ MLP.prototype.backpropagateLayer = function(upper,lower) {
        out = x;
        err = 0.0;
        upper.output.each(function(y,k) {
-          err = err + upper.weight.elements[k-1][i-1] * upper.error.e(k); 
+          err = err + upper.weight.elements[k-1][i-1] * upper.err.e(k); 
        }); 
-       lower.error.elements[i-1] = this.gain * out * (1-out) * err;
+       lower.err.elements[i-1] = this.gain * out * (1-out) * err;
     });
     
 }
@@ -130,16 +132,17 @@ MLP.prototype.computeError = function(output,target) {
     var out = 0.0;
     var err = 0.0;
     
-    output.each(function(x,i) {
+    output.output.each(function(x,i) {
        out = x;
-       err = target(i)-out;
-       output.error.elements[i-1] = this.gain * out * (1-out) * err; 
+       err = target.e(i)-out;
+       
+       output.err.elements[i-1] = this.gain * out * (1-out) * err; 
     });
 }
 
 //          W E I G H T S
 MLP.prototype.adjustWeights = function() {
-    this.adjustLayerWeights(this.hiddenLayer,this.intputLayer);
+    this.adjustLayerWeights(this.hiddenLayer,this.inputLayer);
     this.adjustLayerWeights(this.outputLayer,this.hiddenLayer);
 }
  
@@ -148,11 +151,12 @@ MLP.prototype.adjustLayerWeights = function(current, last) {
    var err=0;
    var weightDelta=0.0;
    
-   current.error.each(function(x,i) {
+   current.err.each(function(x,i) {
       last.output.each(function(y,k) {
           out = y;
           err= x;
           weightDelta = current.dweight.elements[i-1][k-1];
+          console.log( err * out * weightDelta)
           current.weight.elements[i-1][k-1] =  current.weight.elements[i-1][k-1] + this.eta * err * out * this.alhpa * weightDelta;
           current.dweight.elements[i-1][k-1] = this.eta * err * out;
       }); 
@@ -164,9 +168,9 @@ MLP.prototype.adjustLayerWeights = function(current, last) {
 MLP.prototype.simulate = function(input, target) {
     this.setInput(input);
     this.propagate();
-    this.computeError(this.outputLayer,target);
-    this.backpropagate();
-    this.adjustWeights(); 
+   // this.computeError(this.outputLayer,target);
+     this.backpropagate();
+     this.adjustWeights(); 
 }
 
 MLP.prototype.train = function() {
@@ -253,9 +257,14 @@ var test1 = Matrix.create([
 
  
  // create new classifier
- classifier = new Classifier;
+ classifier = new MLP;
  // create a MLP with 3 input neurons
- classifier.init(3,3,1);
+ classifier.init(4,4,4);
+ 
+ console.log(classifier.outputLayer.weight.inspect());
+ var target = Vector.Random(4);
+ classifier.simulate(test0.row(1),target);
+  console.log(classifier.outputLayer.weight.inspect());
  // train MLP with matrix test0
  //classifier.classifier.trainBatch(test0);
  
