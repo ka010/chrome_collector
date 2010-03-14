@@ -69,7 +69,10 @@ function TabStats () {
 
    this.getClosedTabs = function() {
       var closedTabs = db.getItem("closedTabs");
-      return closedTabs;
+      if (closedTabs != null) {
+         return closedTabs;
+      }
+      return new Array();
    }
 
    this.getTab = function(tabID) {

@@ -3,7 +3,7 @@
  * Global stuff
  */
 
-var logging = true;
+var logging = false;
 var domainStats = new DomainStats(); 
 var tabStats = new TabStats();
 var lastSelectedTab = null;
@@ -36,7 +36,7 @@ function getDomainForURL(url) {
 
 chrome.tabs.onCreated.addListener(function(tab) {
    log("tab created: " + tab.id + ":" + tab.url);
-   if (tab.url != "chrome://devtools/devtools.html") {
+   if (isTabStored(tab.url)) {
       tabStats.addTab(tab);
    }
 }); 
@@ -50,7 +50,7 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
       domainStats.updateLastActivity(lastSelectedTab.url);
       domainStats.addActivity(tab.url);
       lastSelectedTab = tab;
-      if (tab.url != "chrome://devtools/devtools.html") {
+      if (isTabStored(tab.url)) {
          tabStats.updateTabView(tab);
       }
    });
@@ -61,7 +61,7 @@ chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
    function(tab) {
       log("tab moved: " + tab.id + ":" + tab.url);
       domainStats.addMove(tab.url);
-      if (tab.url != "chrome://devtools/devtools.html") {
+      if (isTabStored(tab.url)) {
          tabStats.updateTabMove(tab);
       }
    });
@@ -76,7 +76,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
          domainStats.addActivity(tab.url);
       }
 
-      if (tab.url != "chrome://devtools/devtools.html") {
+      if (isTabStored(tab.url)) {
          tabStats.updateTabUpdates(tab);
       }
    }
@@ -84,7 +84,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 chrome.tabs.onRemoved.addListener(function(tabId) {
    log("tab removed: " + tabId);
-   if (tab.url != "chrome://devtools/devtools.html") {
+   if (isTabStored(tab.url)) {
       tabStats.removeTab(tabId)
    }
 });
+
+function isTabStored(url) {
+   var matchesExtension = url.match(/^chrome(.*):/);
+   return (url != "chrome://devtools/devtools.html" && matchesExtension); 
+}
