@@ -156,12 +156,13 @@ MLP.prototype.adjustLayerWeights = function(current, last) {
           out = y;
           err= x;
           weightDelta = current.dweight.elements[i-1][k-1];
-          console.log( err * out * weightDelta)
+          //console.log( err * out * weightDelta)
           current.weight.elements[i-1][k-1] =  current.weight.elements[i-1][k-1] + this.eta * err * out * this.alhpa * weightDelta;
           current.dweight.elements[i-1][k-1] = this.eta * err * out;
       }); 
    });
-   
+   current.weight=Matrix.Random(current.units,current.units);
+   last.weight=Matrix.Random(last.units,last.units);
 }
 
 //          T R A I N
@@ -170,7 +171,7 @@ MLP.prototype.simulate = function(input, target) {
     this.propagate();
   //  this.computeError(this.outputLayer,target);
      this.backpropagate();
-  //   this.adjustWeights(); 
+     this.adjustWeights(); 
 }
 
 MLP.prototype.train = function(tabData) {
@@ -226,10 +227,15 @@ MLP.prototype.trainBatch = function(inputMatrix) {
 }
 
 //          C L A S S I F Y
-MLP.prototype.classify = function(input) {
-    this.setInput(input);
-    var output = this.calculate();
-    return output;
+MLP.prototype.classify = function(tabData) {
+    var input = Vector.create([tabData.viewCount, tabData.updateCount, tabData.moveCount, tabData.score]);
+    
+      this.setInput(input);
+      this.propagate();
+      this.backpropagate();
+      this.adjustWeights();
+    
+    return this.outputLayer.output.e(1);
 }
 
 

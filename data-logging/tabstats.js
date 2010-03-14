@@ -76,8 +76,18 @@ function TabStats () {
    this.getCollectedTabs = function() {
       var all = this.getAllTabs();
       var avgScore = getAvgClosedScore();
+      
+      // classifier
+      var classifierResults = new Array();
+      all.forEach(function(tabData){
+         classifierResults.push(classifier.classify(tabData));
+      });
+
+      // metric
+      var i=0;
       tabs = all.filter(function(tabData) {
-            return (tabData.score - avgScore < 2);
+            i +=1;
+            return ((tabData.score ) - avgScore  < 2);
       });
       return tabs;
    }
