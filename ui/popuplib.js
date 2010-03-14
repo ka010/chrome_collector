@@ -5,9 +5,9 @@ var domainStats = chrome.extension.getBackgroundPage().getDomainStats();
 
 function render() {
    var collectedTabs = tabStats.getCollectedTabs();
-   var coList = createList(collectedTabs);
+   var coList = createList(collectedTabs,'tablist1');
    var closedTabs = tabStats.getClosedTabs();
-   var clList = createList(closedTabs);
+   var clList = createList(closedTabs,'tablist2');
 
    coList.forEach(function(item) {
       $('.list1').append(item);
@@ -27,7 +27,7 @@ function render() {
 
 }
 
-function createList(data) {
+function createList(data,id) {
    var list = new Array();
    data.forEach(function(tab) {
 
@@ -42,7 +42,7 @@ function createList(data) {
             thumbSize = "100px";
          }
 
-         var item = "<li class='listitem' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div id='shadow-container'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input class='checkitem' type='checkbox' checked='true' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
+         var item = "<li class='listitem' id='" + tab.tabID + "'><a class='screenshot' rel='"+tab.thumbnail+"' rev='"+thumbSize+"'><div class='"+id+"'><img src='" + tab.favIconUrl + "' alt='favicon' width='20px'/><input class='checkitem' type='checkbox' checked='true' name='" + tab.url + "' value='" + tab.tabID + "'>" + tab.title + "</div></a></li>";
 	console.log(tab.title);
          list.push(item);
       }
@@ -57,4 +57,19 @@ function cleanUp() {
       chrome.tabs.remove(parseInt(this.value));
       $('#'+this.value).hide('slow');
    });
+}
+
+function restoreTabs() {
+    
+             $('.tablist2 > input:checkbox:checked').each(function(i) {
+               
+               var props = {
+                   'url': this.name
+               };
+                chrome.tabs.create(props);
+                
+             });
+     
+
+  
 }
