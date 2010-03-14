@@ -168,15 +168,36 @@ MLP.prototype.adjustLayerWeights = function(current, last) {
 MLP.prototype.simulate = function(input, target) {
     this.setInput(input);
     this.propagate();
-   // this.computeError(this.outputLayer,target);
+  //  this.computeError(this.outputLayer,target);
      this.backpropagate();
-     this.adjustWeights(); 
+  //   this.adjustWeights(); 
 }
 
-MLP.prototype.train = function() {
-    
+MLP.prototype.train = function(tabData) {
+    var input = Vector.create([tabData.viewCount, tabData.updateCount, tabData.moveCount, tabData.score]);
+    this.simulate(input,1);
+
 }
 
+MLP.prototype.store = function() {
+    return {
+        "input": this.inputLayer.weight.elements,
+        "hidden": this.hiddenLayer.weight.elements,
+        "output": this.outputLayer.weight.elements
+    };
+}
+
+MLP.prototype.load = function(data) {
+    var input = Matrix.Zero(4,4);
+    var hidden = Matrix.Zero(4,4);
+    var output = Matrix.Zero(4,4);
+    input.elements = data.input;
+    hidden.elements = data.hidden;
+    output.elements = data.output;
+    this.inputLayer.weight = input;
+    this.hiddenLayer.weight = hidden;
+    this.outputLayer.weight = output;
+}
 
 MLP.prototype.trainBatch = function(inputMatrix) {
     
@@ -218,43 +239,6 @@ MLP.prototype.classify = function(input) {
 //*******************************************************
 
 function test() {
-var CLASS_BLUE =1;
-var CLASS_RED = 0;
-var CLASS_CLOSE = 1;
-var CLASS_KEEP = 0;
-
-var test0 =Matrix.create([
-    //RED           GREEN       BLUE            CLASS
-[    0,              0,           255,           CLASS_BLUE],
-[    0,              0,           192,           CLASS_BLUE],
-[    243,            80,          59,            CLASS_RED],
-[    255,            0,           77,            CLASS_RED],
-[    77,             93,         190,            CLASS_BLUE],
-[    255,            98,         89,             CLASS_RED],
-[    208,            0,          49,             CLASS_RED],
-[    67,             15,         210,            CLASS_BLUE],
-[    82,             117,        174,            CLASS_BLUE],
-[    168,            42,         89,             CLASS_RED],
-[    248,            80,         68,             CLASS_RED],
-[    128,            80,         255,            CLASS_BLUE],
-[    228,            105,        116,            CLASS_RED]
-    ]);
-
-var test1 = Matrix.create([
- //   views,    updates,    lifetime (hours),   Collect 
-[    5,             2,          3,       CLASS_CLOSE],
-[    4,             12,         3,       CLASS_KEEP],
-[    6,             10,         2,      CLASS_CLOSE],
-[    2,             1,          3,      CLASS_CLOSE],
-[    1,             1,          5,      CLASS_KEEP],
-[    11,            7,          2,      CLASS_KEEP],
-[    1,             8,          1,      CLASS_KEEP],
-[    3,             2,          2,      CLASS_CLOSE],
-[    2,             6,          2,      CLASS_CLOSE],
-[    1,             2,          1,      CLASS_CLOSE],
-[    2,             6,          1,      CLASS_KEEP],
- ]);
-
  
  // create new classifier
  classifier = new MLP;
@@ -265,15 +249,7 @@ var test1 = Matrix.create([
  var target = Vector.Random(4);
  classifier.simulate(test0.row(1),target);
   console.log(classifier.outputLayer.weight.inspect());
- // train MLP with matrix test0
- //classifier.classifier.trainBatch(test0);
- 
-// create a test vector
-//var testVector = Vector.create([128, 250, 0]);
-// input testVector to classifier
-//var class_found = classifier.classify(normalize(testVector));  
-// alert output
-//alert ("Class:" + class_found);
+
 }
 
 //*******************************************************
