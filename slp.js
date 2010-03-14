@@ -30,7 +30,7 @@ Perceptron.prototype.calculate = function() {
     
     var w = this.weightsVector;
     
-    // calculate sum
+    // calculate neuron
     this.inputVector.each(function(x,i) {
         sum = sum + x* w.e(i);
     });
@@ -42,6 +42,7 @@ Perceptron.prototype.calculate = function() {
   //      sum =0;
     }
     sum = 1.0 / (1.0+Math.exp(-sum));
+    
     // return class - 0/1
     return sum;
 }
@@ -94,29 +95,6 @@ Perceptron.prototype.classify = function(input) {
     return output;
 }
 
-//*******************************************************
-//** Classifier                                        **
-//*******************************************************
-
-function Classifier() {
-    this.classifier = new Perceptron;
-}
-
-Classifier.prototype.init = function(inputs) {
-    this.classifier.init(inputs);
-}
-
-Classifier.prototype.classify = function(input) {
-  
-    this.classifier.setInput(input);
-    var output = this.classifier.calculate();
-    if (output > 0.5 ) return 1
-    else return 0;
-}
-
-Classifier.prototype.train = function(input) {
-    
-}
 
 
 //*******************************************************
@@ -150,7 +128,7 @@ var test1 = Matrix.create([
  //   views,    updates,    lifetime (hours),   Collect 
 [    15,             20,          3,       CLASS_CLOSE],
 [    4,             12,         13,       CLASS_KEEP],
-[    6,             10,         2,      CLASS_CLOSE],
+[    16,             10,         2,      CLASS_CLOSE],
 [    2,             1,          13,      CLASS_CLOSE],
 [    11,             11,          15,      CLASS_KEEP],
 [    11,            17,          20,      CLASS_KEEP],

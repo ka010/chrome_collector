@@ -1,104 +1,178 @@
 //*******************************************************
-//** Multi Layer MLP                            **
+//** Multi Layer Perceptron                            **
 //*******************************************************
+
+//*****************************************
+//*             C L A S S: Layer          *
+//*****************************************
+// constructor 
 function Layer() {
     this.units=0;
     this.output;
     this.error;
     this.weight;
+    this.dweight;
 }
 
+// init 
 Layer.prototype.init = function (units) {
     this.units = units;
     this.output = Vector.Zero(units);
     this.error = Vector.Zero(units);
     this.weight = Matrix.Zero(units,units);
+    this.dweight = Matrix.Zero(units,units);
     
-   
+   // init weights with random values between 0.5 and -0.5
     var w = this.weight;
     for (k=0; k<this.weight.rows(); k++) {
         var weights = w.row(k+1); 
         
         weights.each(function(x,i) {
-           x =  (Math.random()) - 0.5;
-           weights.elements[i-1] = x;
+            
+           var z =  (Math.random()) - 0.5;
+           weights.elements[i-1] = z;
+          
         });  
-    }
+        this.weight.elements[k] = weights.elements;
 
+    }
+    
+    console.log("weights: " + w.inspect());
 }
 
+Layer.prototype.propagate = function(outputLayer) {
+ var sum=0.0;
+ 
+ 
+    
+}
 
-
-
+//*****************************************
+//*             C L A S S: MLP            *
+//*****************************************
+//          C O N S T R U C T O R
 function MLP() {
     
     this.Layers = new Array();
     this.inputLayer = new Layer;
     this.hiddenLayer = new Layer;
     this.outputLayer = new Layer;
+    this.eta=0.02;
     this.alpha=0;
     this.learningRate=0.02;
     this.gain=1;
     this.error=0;
 }
 
+//          I N I T
 MLP.prototype.init = function(INPUT,HIDDEN,OUTPUT) {
     this.INPUT = INPUT;
     this.HIDDEN = HIDDEN;
     this.OUTPUT = OUTPUT;
     
-    this.inputLayer.init(3);
-    this.hiddenLayer.init(3);
-    this.outputLayer.init(1);
-
-    alert(this.inputLayer.weight.inspect());
-
+    this.inputLayer.init(INPUT);
+    this.hiddenLayer.init(HIDDEN);
+    this.outputLayer.init(OUTPUT);
+    
 }
 
-
+//          I N P U T
 MLP.prototype.setInput = function(input) {
     this.inputLayer.output = input;
 }
 
+//          O U T P U T
 MLP.prototype.getOutput = function() {
     return this.outputLayer.output;
 }
 
-MLP.prototype.calculate = function() {
-    var current=0;
+//      P R O P A G A T E   S I G N A L S 
+MLP.prototype.propagate = function() {
+    this.propagateLayer(this.inputLayer,this.outputLayer);
+    this.propagateLayer(this.hiddenLayer,this.outputLayer);
+}
+
+MLP.prototype.propagateLayer = function(lower,upper) {
     var sum=0.0;
-    
-    var w = this.weightsVector;
-    
-    // calculate sum
-    this.inputVector.each(function(x,i) {
-        sum = sum + x* w.e(i);
-    });
-    
-    // activation
-    if (sum >= 0) {
-//        sum =1;
-    } else {
-  //      sum =0;
-    }
-    sum = 1.0 / (1.0+Math.exp(-sum));
-    // return class - 0/1
-    return sum;
-}
 
-MLP.prototype.adjustWeights = function(learningRate, output, target) {
-    var w = this.weightsVector;
-    this.inputVector.each(function(x,i) {
-        w.elements[i-1] = w.e(i) + learningRate * (target-output) * x;
+    upper.output.each(function(x,i) {
+       sum = 0.0;
+       lower.output.each(function(y,k) {
+          sum = sum+ upper.weight.elements[i-1][k-1] * y;
+       });
+       upper.output.elements[i-1] = 1.0 / (1.0 + Math.exp(-sum));
     });
 }
 
-MLP.prototype.train = function(input, target) {
+
+MLP.prototype.backpropagate = function() {
+    this.backpropagateLayer(this.outputLayer,this.hiddenLayer);
+    this.backpropagateLayer(this.hiddenLayer,this.inputLayer);
+}
+
+MLP.prototype.backpropagateLayer = function(upper,lower) {
+    var out = 0.0;
+    var err = 0.0;
+    
+    lower.output.each(function(x,i) {
+       out = x;
+       err = 0.0;
+       upper.output.each(function(y,k) {
+          err = err + upper.weight.elements[k-1][i-1] * upper.error.e(k); 
+       }); 
+       lower.error.elements[i-1] = this.gain * out * (1-out) * err;
+    });
+    
+}
+
+//          C O M P U T E   E R R O R 
+MLP.prototype.computeError = function(output,target) {
+    var out = 0.0;
+    var err = 0.0;
+    
+    output.each(function(x,i) {
+       out = x;
+       err = target(i)-out;
+       output.error.elements[i-1] = this.gain * out * (1-out) * err; 
+    });
+}
+
+//          W E I G H T S
+MLP.prototype.adjustWeights = function() {
+    this.adjustLayerWeights(this.hiddenLayer,this.intputLayer);
+    this.adjustLayerWeights(this.outputLayer,this.hiddenLayer);
+}
+ 
+MLP.prototype.adjustLayerWeights = function(current, last) {
+   var out=0;
+   var err=0;
+   var weightDelta=0.0;
+   
+   current.error.each(function(x,i) {
+      last.output.each(function(y,k) {
+          out = y;
+          err= x;
+          weightDelta = current.dweight.elements[i-1][k-1];
+          current.weight.elements[i-1][k-1] =  current.weight.elements[i-1][k-1] + this.eta * err * out * this.alhpa * weightDelta;
+          current.dweight.elements[i-1][k-1] = this.eta * err * out;
+      }); 
+   });
+   
+}
+
+//          T R A I N
+MLP.prototype.simulate = function(input, target) {
     this.setInput(input);
-    var output = this.calculate();
-    this.adjustWeights(this.learningRate,output,target); 
-    return output;
+    this.propagate();
+    this.computeError(this.outputLayer,target);
+    this.backpropagate();
+    this.adjustWeights(); 
 }
+
+MLP.prototype.train = function() {
+    
+}
+
 
 MLP.prototype.trainBatch = function(inputMatrix) {
     
@@ -126,34 +200,13 @@ MLP.prototype.trainBatch = function(inputMatrix) {
     }
 }
 
+//          C L A S S I F Y
 MLP.prototype.classify = function(input) {
     this.setInput(input);
     var output = this.calculate();
     return output;
 }
 
-//*******************************************************
-//** Classifier                                        **
-//*******************************************************
-
-function Classifier() {
-    this.classifier = new MLP;
-}
-
-Classifier.prototype.init = function(inputs) {
-    this.classifier.init(inputs);
-}
-
-Classifier.prototype.classify = function(input) {
-    this.classifier.setInput(input);
-    var output = this.classifier.calculate();
-    if (output > 0.5 ) return 1
-    else return 0;
-}
-
-Classifier.prototype.train = function(input) {
-    
-}
 
 
 //*******************************************************
@@ -202,7 +255,7 @@ var test1 = Matrix.create([
  // create new classifier
  classifier = new Classifier;
  // create a MLP with 3 input neurons
- classifier.init(3);
+ classifier.init(3,3,1);
  // train MLP with matrix test0
  //classifier.classifier.trainBatch(test0);
  
